@@ -8,68 +8,39 @@ on:
 jobs:
   build-msix:
     runs-on: windows-latest
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Download EXE
-      run: |
-        Invoke-WebRequest -Uri "https://plssem.com/DataAnalysisRobot.exe" -OutFile "DataAnalysisRobot.exe"
+      shell: powershell
+      run: Invoke-WebRequest -Uri "https://plssem.com/DataAnalysisRobot.exe" -OutFile "DataAnalysisRobot.exe"
 
-    - name: Create MSIX Package
+    - name: Create AppxManifest
+      shell: powershell
       run: |
-        # AppxManifest oluştur
-        $manifest = @"
-<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
-  <Identity Name="DrYavuzToraman.DataAnalysisRobot"
-            Publisher="CN=DataAnalysisRobot"
-            Version="1.0.0.0"
-            ProcessorArchitecture="x64"/>
-  <Properties>
-    <DisplayName>Data Analysis Robot</DisplayName>
-    <PublisherDisplayName>Dr. Yavuz Toraman (plssem.com)</PublisherDisplayName>
-    <Logo>assets\logo.png</Logo>
-  </Properties>
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0"/>
-  </Dependencies>
-  <Resources>
-    <Resource Language="en-US"/>
-    <Resource Language="tr-TR"/>
-  </Resources>
-  <Applications>
-    <Application Id="DataAnalysisRobot"
-                 Executable="DataAnalysisRobot.exe"
-                 EntryPoint="Windows.FullTrustApplication">
-      <uap:VisualElements DisplayName="Data Analysis Robot"
-                          Description="Free AI-powered PLS-SEM analysis platform"
-                          BackgroundColor="transparent"
-                          Square150x150Logo="assets\logo.png"
-                          Square44x44Logo="assets\logo44.png"/>
-    </Application>
-  </Applications>
-  <Capabilities>
-    <rescap:Capability Name="runFullTrust"/>
-  </Capabilities>
-</Package>
-"@
         New-Item -ItemType Directory -Force -Path "PackageLayout\assets"
-        $manifest | Out-File -FilePath "PackageLayout\AppxManifest.xml" -Encoding UTF8
+        $xml = '<?xml version="1.0" encoding="utf-8"?>'
+        $xml += '<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">'
+        $xml += '<Identity Name="DrYavuzToraman.DataAnalysisRobot" Publisher="CN=DataAnalysisRobot" Version="1.0.0.0" ProcessorArchitecture="x64"/>'
+        $xml += '<Properties><DisplayName>Data Analysis Robot</DisplayName><PublisherDisplayName>Dr. Yavuz Toraman</PublisherDisplayName><Logo>assets\logo.png</Logo></Properties>'
+        $xml += '<Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0"/></Dependencies>'
+        $xml += '<Resources><Resource Language="en-US"/></Resources>'
+        $xml += '<Applications><Application Id="DataAnalysisRobot" Executable="DataAnalysisRobot.exe" EntryPoint="Windows.FullTrustApplication"><uap:VisualElements DisplayName="Data Analysis Robot" Description="Free AI-powered PLS-SEM" BackgroundColor="transparent" Square150x150Logo="assets\logo.png" Square44x44Logo="assets\logo44.png"/></Application></Applications>'
+        $xml += '<Capabilities><rescap:Capability Name="runFullTrust"/></Capabilities>'
+        $xml += '</Package>'
+        $xml | Out-File -FilePath "PackageLayout\AppxManifest.xml" -Encoding UTF8
         Copy-Item "DataAnalysisRobot.exe" "PackageLayout\"
-        
-        # Placeholder logo
-        $logoBytes = [Convert]::FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
-        [IO.File]::WriteAllBytes("PackageLayout\assets\logo.png", $logoBytes)
-        [IO.File]::WriteAllBytes("PackageLayout\assets\logo44.png", $logoBytes)
-        
-        # MSIX oluştur
-        MakeAppx pack /d PackageLayout /p DataAnalysisRobot.msix /nv
+        $bytes = [Convert]::FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
+        [IO.File]::WriteAllBytes("PackageLayout\assets\logo.png", $bytes)
+        [IO.File]::WriteAllBytes("PackageLayout\assets\logo44.png", $bytes)
 
-    - name: Upload MSIX
+    - name: Pack MSIX
+      shell: powershell
+      run: MakeAppx pack /d PackageLayout /p DataAnalysisRobot.msix /nv
+
+    - name: Upload MSIX artifact
       uses: actions/upload-artifact@v4
       with:
         name: DataAnalysisRobot-msix
