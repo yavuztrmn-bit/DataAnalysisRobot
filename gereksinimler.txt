@@ -1,0 +1,11 @@
+# Data Analysis Robot — masaüstü sürüm bağımlılıkları
+fastapi
+uvicorn
+pydantic
+numpy
+pandas
+scipy
+semopy
+openpyxl
+python-multipart
+pyinstaller

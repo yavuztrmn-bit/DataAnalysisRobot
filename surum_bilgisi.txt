@@ -1,0 +1,24 @@
+# Windows sürüm bilgisi — dosya özelliklerinde görünür
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 0, 0, 0),
+    prodvers=(1, 0, 0, 0),
+    mask=0x3f, flags=0x0, OS=0x40004, fileType=0x1, subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo([
+      StringTable('040E04B0', [
+        StringStruct('CompanyName', 'Data Analysis Robot'),
+        StringStruct('FileDescription', 'Data Analysis Robot - PLS-SEM Analiz Platformu'),
+        StringStruct('FileVersion', '1.0.0'),
+        StringStruct('InternalName', 'DataAnalysisRobot'),
+        StringStruct('LegalCopyright', '(c) 2026 Data Analysis Robot - plssem.com'),
+        StringStruct('OriginalFilename', 'DataAnalysisRobot.exe'),
+        StringStruct('ProductName', 'Data Analysis Robot'),
+        StringStruct('ProductVersion', '1.0.0'),
+      ])
+    ]),
+    VarFileInfo([VarStruct('Translation', [1055, 1200])])
+  ]
+)
