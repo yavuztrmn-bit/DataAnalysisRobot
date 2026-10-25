@@ -24,7 +24,7 @@ jobs:
         $xml = '<?xml version="1.0" encoding="utf-8"?>'
         $xml += '<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">'
         $xml += '<Identity Name="DrYavuzToraman.DataAnalysisRobot" Publisher="CN=DataAnalysisRobot" Version="1.0.0.0" ProcessorArchitecture="x64"/>'
-        $xml += '<Properties><DisplayName>Data Analysis Robot</DisplayName><PublisherDisplayName>Dr. Yavuz Toraman</PublisherDisplayName><Logo>assets\logo.png</Logo></Properties>'
+        $xml += '<Properties><DisplayName>Data Analysis Robot</DisplayName><PublisherDisplayName>Dr. Yavuz TORAMAN (plssem.com)</PublisherDisplayName><Logo>assets\logo.png</Logo></Properties>'
         $xml += '<Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0"/></Dependencies>'
         $xml += '<Resources><Resource Language="en-US"/></Resources>'
         $xml += '<Applications><Application Id="DataAnalysisRobot" Executable="DataAnalysisRobot.exe" EntryPoint="Windows.FullTrustApplication"><uap:VisualElements DisplayName="Data Analysis Robot" Description="Free AI-powered PLS-SEM" BackgroundColor="transparent" Square150x150Logo="assets\logo.png" Square44x44Logo="assets\logo44.png"/></Application></Applications>'
