@@ -21,7 +21,7 @@ call venv\Scripts\activate.bat
 
 echo   [2/4] Bagimliliklar kuruluyor (birkac dakika surebilir)...
 python -m pip install --upgrade pip -q
-pip install -r gereksinimler.txt -q
+python -m pip install -r gereksinimler.txt -q
 if errorlevel 1 ( echo   HATA: Bagimliliklar kurulamadi. & pause & exit /b 1 )
 
 echo   [3/4] Onceki derleme temizleniyor...

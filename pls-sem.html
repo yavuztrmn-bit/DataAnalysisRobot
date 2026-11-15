@@ -1440,7 +1440,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <img src="logo.1.png" alt="Logo" class="logo-img">
+        <img src="logo.1.png" alt="Logo" class="logo-img" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='logo_256.png';}">
         <h5 class="mb-0">Data Analysis Robot</h5>
       </div>
 
@@ -1556,7 +1556,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                               cursor:pointer;background:#f5f7fa;
                               border:1px solid rgba(31,34,53,.30);">
                     <img id="plssemVideoThumb"
-     src="https://img.youtube.com/vi/OOBQFmRlqls/hqdefault.jpg"
+     src="https://img.youtube.com/vi/L44DGRUwzKY/hqdefault.jpg"
      alt="Tanıtım Videosu"
      style="width:100%;height:100%;object-fit:cover;opacity:1;display:block;"
      onerror="if(this.dataset.fb!=='1'){this.dataset.fb='1';this.src=this.src.replace('/maxresdefault.jpg','/hqdefault.jpg');}else{this.style.display='none';}">
@@ -5639,7 +5639,7 @@ if (ctrlNames.length) {
       // ═══════════════════════════════════════════════════════════
       const hyps = res.hypotheses || [];
       if (hyps.length) {
-        const accepted = hyps.filter(h => String(h.decision||"").toLowerCase().includes("desteklendi") || /accepted/i.test(h.decision||""));
+        const accepted = hyps.filter(h => String(h.decision||"").toLowerCase().includes("desteklendi") || /accepted/i.test(h.decision||"") || /not rejected/i.test(h.decision||""));
         const rejected = hyps.filter(h => !accepted.includes(h));
         const rate = Math.round(accepted.length / hyps.length * 100);
         out.push(hr());
@@ -5786,7 +5786,7 @@ if (ctrlNames.length) {
       // GENEL ÖZET (kapanış)
       // ═══════════════════════════════════════════════════════════
       if (hyps.length) {
-        const accCount = hyps.filter(h => String(h.decision||"").toLowerCase().includes("desteklendi") || /accepted/i.test(h.decision||"")).length;
+        const accCount = hyps.filter(h => String(h.decision||"").toLowerCase().includes("desteklendi") || /accepted/i.test(h.decision||"") || /not rejected/i.test(h.decision||"")).length;
         const rate = Math.round(accCount / hyps.length * 100);
         out.push(hr());
         out.push(`<div class="small mt-2" style="padding:8px 10px;background:rgba(31,34,53,0.06);border-left:3px solid var(--accent);border-radius:4px;">
@@ -6027,7 +6027,8 @@ async function exportAcademicSmartPLSWord() {
       const indHeaders = indMat.headers.length ? indMat.headers.slice() : ["Relations", "Path Coefficient", "T Value", "P Value", "< 0.05"];
       const indRows = indMat.rows.map(r => {
         const row = r.slice();
-        if (row.length >= 5) row[4] = (/accepted/i.test(row[4]) || /desteklendi/i.test(row[4]) || /not rejected/i.test(row[4]) || (/anlamlı/i.test(row[4]) && !/anlamsız/i.test(row[4]))) ? "Not Rejected" : "Rejected";
+        const L = row.length - 1;
+        if (row.length >= 5) row[L] = (/accepted/i.test(row[L]) || /desteklendi/i.test(row[L]) || /not rejected/i.test(row[L]) || (/anlamlı/i.test(row[L]) && !/anlamsız/i.test(row[L]))) ? "Not Rejected" : "Rejected";
         return row;
       });
 
@@ -6171,11 +6172,11 @@ async function exportAcademicSmartPLSWord() {
 
       // Tablo 6 yorumu — Hipotezler
       const interpretT6 = () => {
-        const accepted = hypRows.filter(r => /accepted/i.test(r[r.length-1])).length;
-        const rejected = hypRows.filter(r => /rejected/i.test(r[r.length-1])).length;
+        const accepted = hypRows.filter(r => /not rejected|accepted|desteklendi/i.test(r[r.length-1])).length;
+        const rejected = hypRows.length - accepted;
         const hypDetails = hypRows.map(r => {
-          const sig = /accepted/i.test(r[r.length-1]);
-          if (isTR) return `${r[0]} (${r[1]}): β=${r[2]}, T=${r[4]}, p=${r[5]}, 95% CI ${r[6]} — ${sig ? 'Desteklendi' : 'Reddedildi'}.`;
+          const sig = /not rejected|accepted|desteklendi/i.test(r[r.length-1]);
+          if (isTR) return `${r[0]} (${r[1]}): β=${r[2]}, T=${r[4]}, p=${r[5]}, 95% CI ${r[6]} — ${sig ? 'Reddedilmedi' : 'Reddedildi'}.`;
           return `${r[0]} (${r[1]}): β=${r[2]}, T=${r[4]}, p=${r[5]}, 95% CI ${r[6]} — ${sig ? 'Not Rejected' : 'Rejected'}.`;
         }).join(" ");
         if (isTR) {
@@ -6186,7 +6187,7 @@ async function exportAcademicSmartPLSWord() {
 
       // Tablo 7 yorumu — Dolaylı Etkiler
       const interpretT7 = () => {
-        const accepted = indRows.filter(r => /accepted/i.test(r[r.length-1])).length;
+        const accepted = indRows.filter(r => /not rejected|accepted|desteklendi/i.test(r[r.length-1])).length;
         if (isTR) {
           return `Tablo 7, dolaylı (aracı) etkilere ilişkin bootstrap sonuçlarını göstermektedir. ${accepted} dolaylı etki istatistiksel olarak anlamlı bulunmuştur. P değerinin 0.05'in altında olması, aracılık etkisinin varlığına işaret eder.`;
         }
@@ -6212,9 +6213,9 @@ async function exportAcademicSmartPLSWord() {
       // ── EXECUTIVE SUMMARY ──────────────────────────────────
       const buildSummary = () => {
         const totalHyp   = hypRows.length;
-        const accHyp     = hypRows.filter(r => /accepted/i.test(r[r.length-1])).length;
+        const accHyp     = hypRows.filter(r => /not rejected|accepted|desteklendi/i.test(r[r.length-1])).length;
         const rejHyp     = totalHyp - accHyp;
-        const accInd     = indRows.filter(r => /accepted/i.test(r[r.length-1])).length;
+        const accInd     = indRows.filter(r => /not rejected|accepted|desteklendi/i.test(r[r.length-1])).length;
         const avgAVE     = t2_rows.length ? (t2_rows.reduce((s,r)=>s+Number(r[4]||0),0)/t2_rows.length).toFixed(3) : "—";
         const avgCR      = t2_rows.length ? (t2_rows.reduce((s,r)=>s+Number(r[3]||0),0)/t2_rows.length).toFixed(3) : "—";
         const avgLoad    = t1_rows.length ? (t1_rows.reduce((s,r)=>s+Number(r[5]||0),0)/t1_rows.length).toFixed(3) : "—";

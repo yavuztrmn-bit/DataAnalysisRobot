@@ -38,7 +38,10 @@ except Exception:
     _HAS_CFA = False
 
 APP_NAME = "Data Analysis Robot"
-VERSION = "1.0.0"
+try:
+    from version import VERSION          # tek sürüm kaynağı: version.py
+except Exception:
+    VERSION = "1.0.2"
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI(title=APP_NAME, version=VERSION)

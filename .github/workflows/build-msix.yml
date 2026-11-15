@@ -21,13 +21,16 @@ jobs:
       shell: powershell
       run: |
         New-Item -ItemType Directory -Force -Path "PackageLayout\Assets"
+        # Sürüm tek kaynaktan: version.py (örn. 1.0.2 -> 1.0.2.0)
+        $ver = ((Select-String -Path "version.py" -Pattern 'VERSION\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value) + ".0"
+        Write-Host "Paket sürümü: $ver"
         $xml = '<?xml version="1.0" encoding="utf-8"?>'
         $xml += '<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">'
-        $xml += '<Identity Name="Dr.YavuzTORAMANplssem.com.52549E25D594D" Publisher="CN=40D7BF6A-4C55-4114-A753-7294568B0BDE" Version="1.0.1.0" ProcessorArchitecture="x64"/>'
+        $xml += '<Identity Name="Dr.YavuzTORAMANplssem.com.52549E25D594D" Publisher="CN=40D7BF6A-4C55-4114-A753-7294568B0BDE" Version="' + $ver + '" ProcessorArchitecture="x64"/>'
         $xml += '<Properties><DisplayName>Data Analysis Robot (plssem.com)</DisplayName><PublisherDisplayName>Dr. Yavuz TORAMAN (plssem.com)</PublisherDisplayName><Logo>Assets\StoreLogo.png</Logo></Properties>'
         $xml += '<Dependencies><TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0"/></Dependencies>'
         $xml += '<Resources><Resource Language="en-US"/><Resource Language="tr-TR"/></Resources>'
-        $xml += '<Applications><Application Id="DataAnalysisRobot" Executable="DataAnalysisRobot.exe" EntryPoint="Windows.FullTrustApplication"><uap:VisualElements DisplayName="Data Analysis Robot (plssem.com)" Description="Free AI-powered PLS-SEM" BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png"/></Application></Applications>'
+        $xml += '<Applications><Application Id="DataAnalysisRobot" Executable="DataAnalysisRobot.exe" EntryPoint="Windows.FullTrustApplication"><uap:VisualElements DisplayName="Data Analysis Robot (plssem.com)" Description="Free AI-powered PLS-SEM" BackgroundColor="#FFFFFF" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png"/></Application></Applications>'
         $xml += '<Capabilities><rescap:Capability Name="runFullTrust"/></Capabilities>'
         $xml += '</Package>'
         $xml | Out-File -FilePath "PackageLayout\AppxManifest.xml" -Encoding UTF8

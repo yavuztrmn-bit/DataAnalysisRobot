@@ -66,14 +66,17 @@ if sys.stdin is None:
 
 APP_NAME = "Data Analysis Robot"
 APP_SUB = "Free Data Analysis Platform · plssem.com"
-VERSION = "1.0.0"
+try:
+    from version import VERSION          # tek sürüm kaynağı: version.py
+except Exception:
+    VERSION = "1.0.2"
 
 # Sitedeki atıf ifadesiyle aynı
 TELIF = "© 2026 plssem.com · All rights reserved · Developed by Dr. Yavuz Toraman"
 
 ATIF_BASLIK = ("The Data Analysis Robot can freely used for academic purposes, "
                "if the source is correctly cited.")
-ATIF = ("Toraman, Y. (2026). Data Analysis Robot — PLS-SEM Module (Version 1.0) "
+ATIF = ("Toraman, Y. (2026). Data Analysis Robot — PLS-SEM Module (Version " + ".".join(VERSION.split(".")[:2]) + ") "
         "[Web application]. https://plssem.com")
 
 # ══════════════════════════════════════════════════════════════

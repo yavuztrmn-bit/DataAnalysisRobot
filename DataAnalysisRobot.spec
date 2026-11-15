@@ -10,8 +10,34 @@ Derleme:
 """
 
 import os
+import re
 
 block_cipher = None
+
+# ── Sürüm: tek kaynak version.py ───────────────────────────────
+# surum_bilgisi.txt her derlemede buradan YENİDEN üretilir; elle düzenlemeyin.
+_VER = re.search(r'VERSION\s*=\s*"([^"]+)"', open("version.py", encoding="utf-8").read()).group(1)
+_V4 = tuple(int(x) for x in (_VER.split(".") + ["0", "0", "0"])[:4])
+with open("surum_bilgisi.txt", "w", encoding="utf-8") as _f:
+    _f.write(f"""# OTOMATIK URETILDI (DataAnalysisRobot.spec) — version.py'yi duzenleyin
+VSVersionInfo(
+  ffi=FixedFileInfo(filevers={_V4}, prodvers={_V4}, mask=0x3f, flags=0x0, OS=0x40004, fileType=0x1, subtype=0x0, date=(0, 0)),
+  kids=[
+    StringFileInfo([StringTable('041F04B0', [
+      StringStruct('CompanyName', 'Data Analysis Robot'),
+      StringStruct('FileDescription', 'Data Analysis Robot - PLS-SEM Analiz Platformu'),
+      StringStruct('FileVersion', '{_VER}'),
+      StringStruct('InternalName', 'DataAnalysisRobot'),
+      StringStruct('LegalCopyright', '(c) 2026 Data Analysis Robot - plssem.com'),
+      StringStruct('OriginalFilename', 'DataAnalysisRobot.exe'),
+      StringStruct('ProductName', 'Data Analysis Robot'),
+      StringStruct('ProductVersion', '{_VER}'),
+    ])]),
+    VarFileInfo([VarStruct('Translation', [1055, 1200])])
+  ]
+)
+""")
+print(f"[spec] Surum: {_VER}")
 
 # ── Programla birlikte paketlenecek dosyalar ──────────────────
 # (kaynak, hedef_klasör)
@@ -79,7 +105,7 @@ hiddenimports = [
     "semopy",
     "pandas._libs.tslibs.base",
     "openpyxl",
-    "plssem", "fit_indices", "analysis_queue", "cfa_engine", "app_masaustu", "lisans",
+    "plssem", "fit_indices", "analysis_queue", "cfa_engine", "app_masaustu", "lisans", "version",
     "tkinter", "tkinter.ttk", "tkinter.font",
 ]
 
@@ -133,6 +159,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon="DataAnalysisRobot.ico",
+    icon=("logo.ico" if os.path.exists("logo.ico") else "DataAnalysisRobot.ico"),
     version="surum_bilgisi.txt",
 )
